@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Data;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SQLite;
 using System;
 using System.IO;
 using System.Threading;
@@ -64,6 +66,22 @@ namespace Bot
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
             services.Configure<BotConfiguration>(hostContext.Configuration.GetSection("Bot"));
+
+            string dbPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                hostContext.Configuration.GetValue<string>("Database:FileName")
+            );
+
+            if (!File.Exists(dbPath))
+            {
+                throw new Exception($"Database not found in {dbPath}");
+            }
+
+            services.AddSingleton<SQLiteAsyncConnection>(
+                new SQLiteAsyncConnection(dbPath)
+            );
+
+            services.AddTransient<ITripRepository, TripRepository>();
 
             services.AddHostedService<BotHostedService>();
         }
