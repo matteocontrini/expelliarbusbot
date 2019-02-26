@@ -13,22 +13,33 @@ namespace MapsGenerator
     {
         static void Main(string[] args)
         {
-            string databaseFilePath = @"C:\Users\mcont\Desktop\google_transit_urbano_tte\test.db";
-            string token = ""; // mapbox public token
+            string databaseFilePath = @"C:\Users\mcont\Desktop\google_transit_urbano_tte\data.db";
+
+            // mapbox public token
+            string token = "";
 
             var db = new SQLiteConnection(databaseFilePath);
 
-            // TODO: get shapes dynamically from the database
-            string[] shapes = new string[]
+            Stop[] stops = new Stop[]
             {
-                "D306_F0512_Ritorno_sub2",
-                "D1173_T0526a_Ritorno_sub1",
-                "D1190_T0542_Ritorno_sub1",
-                "D1165_T0522g_Ritorno_sub1",
-                "D1169_T0522o_Ritorno_sub2"
+                new Stop(46.065955, 11.154596), // 0 manci
+                new Stop(46.063862, 11.151912), // 1 centro civico
+                new Stop(46.063947, 11.150560), // 2 pantè
+                new Stop(46.063316, 11.150209), // 3 fac. scienze
+                new Stop(46.067348, 11.150372), // 4 scientifico ovest
+                new Stop(46.065746, 11.146326), // 5 valoni
             };
 
-            foreach (string shapeId in shapes)
+            List<(string, Stop[])> shapes = new List<(string, Stop[])>
+            {
+                ( "D306_F0512_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                ( "D1173_T0526a_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[5] } ),
+                ( "D1190_T0542_Ritorno_sub1", new Stop[] { stops[4], stops[5] } ),
+                ( "D1165_T0522g_Ritorno_sub1", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                ( "D1169_T0522o_Ritorno_sub2", new Stop[] { stops[0], stops[2], stops[4], stops[5] } ),
+            };
+
+            foreach ((string shapeId, Stop[] s) in shapes)
             {
                 Console.WriteLine(shapeId);
                 Console.WriteLine();
@@ -41,9 +52,17 @@ namespace MapsGenerator
                 string polyline = Encode(points);
                 string encoded = WebUtility.UrlEncode(polyline);
 
-                //Console.WriteLine(encoded);
+                StringBuilder pins = new StringBuilder();
+                for (int i = 0; i < s.Length; i++)
+                {
+                    string lon = s[i].Lon.ToString().Replace(',', '.');
+                    string lat = s[i].Lat.ToString().Replace(',', '.');
+                    pins.Append($",pin-l-{i+1}+E94335({lon},{lat})");
+                }
 
-                string url = $"https://api.mapbox.com/styles/v1/matteocontrini/cjslp4zzs5fef1fpeowgokfff/static/path-5+f5c500({encoded}),pin-l-a+E94335(11.150372,46.067348),pin-l-b+E94335(11.154596,46.065955),pin-l-c+E94335(11.151912,46.063862),pin-l-e+E94335(11.150209,46.063316),pin-l-d+E94335(11.150560,46.063947),pin-l-f+E94335(11.146326,46.065746)/11.1507,46.0653,15.3,0,0/600x600@2x?access_token={token}";
+                // old with fixed stops
+                //string url = $"https://api.mapbox.com/styles/v1/matteocontrini/cjslp4zzs5fef1fpeowgokfff/static/path-5+f5c500({encoded}),pin-l-a+E94335(11.150372,46.067348),pin-l-b+E94335(11.154596,46.065955),pin-l-c+E94335(11.151912,46.063862),pin-l-e+E94335(11.150209,46.063316),pin-l-d+E94335(11.150560,46.063947),pin-l-f+E94335(11.146326,46.065746)/11.1507,46.0653,15.3,0,0/600x600@2x?access_token={token}";
+                string url = $"https://api.mapbox.com/styles/v1/matteocontrini/cjslp4zzs5fef1fpeowgokfff/static/path-5+f5c500({encoded}){pins}/11.1507,46.0653,15.3,0,0/600x600@2x?access_token={token}";
 
                 Console.WriteLine(url);
                 Console.WriteLine();
