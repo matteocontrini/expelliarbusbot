@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PovoBusBot
+namespace Bot
 {
     class Program
     {
