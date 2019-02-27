@@ -5,12 +5,14 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot
@@ -62,6 +64,12 @@ namespace Bot
         /// </summary>
         private readonly Dictionary<int, string> numbersEmojis;
 
+        /// <summary>
+        /// Mapping between local image files paths and remote Telegram `file_id`s.
+        /// Used to avoid to reupload the same image every time
+        /// </summary>
+        private readonly Dictionary<string, string> fileIdsCache;
+
         public BotHostedService(IOptions<BotConfiguration> options,
                                 ILogger<BotHostedService> logger,
                                 ITripRepository tripsRepository)
@@ -95,6 +103,8 @@ namespace Bot
                 { 5, "5️⃣" },
                 { 6, "6️⃣" }
             };
+
+            this.fileIdsCache = new Dictionary<string, string>();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -243,16 +253,44 @@ namespace Bot
             }
 
             string mapPath = $"maps/{selectedTrip.ShapeId}.png";
-
-            // TODO: cache the file_id instead of uploading the image every time
-
-            using (Stream stream = System.IO.File.OpenRead(mapPath))
+            string cachedFileId = this.fileIdsCache.GetValueOrDefault(mapPath);
+            
+            if (cachedFileId != null)
             {
+                // Use the cached Telegram file_id
+                await SendOrUpdate(null, cachedFileId);
+            }
+            else
+            {
+                // Read the file from system
+                using (Stream stream = System.IO.File.OpenRead(mapPath))
+                {
+                    await SendOrUpdate(stream, null);
+                }
+            }
+
+            async Task SendOrUpdate(Stream stream, string fileId)
+            {
+                Message sentMessage;
+
+                // Should edit existing message
                 if (messageId.HasValue)
                 {
-                    InputMedia media = new InputMedia(stream, mapPath);
+                    InputMedia media;
 
-                    await this.bot.EditMessageMediaAsync(
+                    // Reuse the cached file_id
+                    if (fileId != null)
+                    {
+                        media = new InputMedia(fileId);
+                    }
+                    // Use the file system stream
+                    else
+                    {
+                        media = new InputMedia(stream, mapPath);
+                    }
+
+                    // Replace the existing message (photo and caption)
+                    sentMessage = await this.bot.EditMessageMediaAsync(
                         chatId: chatId,
                         messageId: messageId.Value,
                         media: new InputMediaPhoto(media)
@@ -263,21 +301,29 @@ namespace Bot
                         replyMarkup: new InlineKeyboardMarkup(kb)
                     );
 
+                    // Visual feedback
                     await this.bot.AnswerCallbackQueryAsync(
                         callbackQueryId: callbackQueryId,
                         text: "✅"
                     );
                 }
+                // Send a new message
                 else
                 {
-                    await this.bot.SendPhotoAsync(
+                    // Use the file stream or the cached file_id
+                    InputOnlineFile photo = (InputOnlineFile)stream ?? fileId;
+
+                    sentMessage = await this.bot.SendPhotoAsync(
                         chatId: chatId,
-                        photo: stream,
+                        photo: photo,
                         caption: builder.ToString(),
                         parseMode: ParseMode.Markdown,
                         replyMarkup: new InlineKeyboardMarkup(kb)
                     );
                 }
+
+                // Save the file_id of the biggest image representation
+                this.fileIdsCache[mapPath] = sentMessage.Photo.Last().FileId;
             }
         }
 
