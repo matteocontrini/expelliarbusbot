@@ -154,11 +154,18 @@ namespace Bot
 
         private async void OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
-            if (e.Message.Type == MessageType.Text)
+            try
             {
-                this.logger.LogInformation("TXT <{0}> {1}", e.Message.Chat.Id, e.Message.Text);
+                if (e.Message.Type == MessageType.Text)
+                {
+                    this.logger.LogInformation("TXT <{0}> {1}", e.Message.Chat.Id, e.Message.Text);
 
-                await HandleTextMessage(e.Message);
+                    await HandleTextMessage(e.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Message exception for: {Message}", e.Message.ToJson());
             }
         }
 
