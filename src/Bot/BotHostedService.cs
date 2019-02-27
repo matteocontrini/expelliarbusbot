@@ -189,6 +189,10 @@ namespace Bot
             {
                 await HandleRouteRequest(message.Chat.Id, null, null, null);
             }
+            else if (t.Contains("aiuto", StringComparison.OrdinalIgnoreCase))
+            {
+                await HandleHelp(message.Chat.Id);
+            }
             else
             {
                 await HandleStart(message.Chat);
@@ -348,10 +352,10 @@ namespace Bot
 
         private async Task HandleStart(Chat chat)
         {
-            var msgs = new string[]
+            string[] msgs = new string[]
             {
                 $"🔍 Ciao, {this.me.Username} è il bot sperimentale per consultare gli orari della *linea 5 da Povo a Trento*",
-                "🕑 La fermata Polo Scientifico Ovest ha una leggera priorità. In alternativa viene preso come riferimento l'orario di Povo Valoni",
+                "🕑 La fermata Polo Scientifico Ovest ha una leggera priorità, e in alternativa viene preso come riferimento l'orario di Povo Valoni",
                 "👀 Ora premi il pulsante qua sotto 👇"
             };
 
@@ -361,12 +365,34 @@ namespace Bot
                     chatId: chat.Id,
                     text: message,
                     replyMarkup: new ReplyKeyboardMarkup(
-                        new KeyboardButton[] { new KeyboardButton("5️⃣ Povo-Trento") },
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("5️⃣ Povo-Trento"),
+                            new KeyboardButton("❓ Aiuto")
+                        },
                         resizeKeyboard: true
                     ),
                     parseMode: ParseMode.Markdown
                 );
             }
+        }
+
+        private async Task HandleHelp(long chatId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine($"🔍 {this.me.Username} è il bot sperimentale per consultare gli orari della *linea 5 da Povo a Trento*");
+            builder.AppendLine();
+            builder.AppendLine("🕑 La fermata Polo Scientifico Ovest ha una leggera priorità, e in alternativa viene preso come riferimento l'orario di Povo Valoni");
+            builder.AppendLine();
+            builder.AppendLine("🤯 Il bot è stato sviluppato da @matteocontrini. Un ringraziamento speciale a [Dario Crisafulli](https://botfactory.it/#chisiamo) per il logo 👏");
+            builder.AppendLine();
+            builder.Append("🤓 Il bot è [open source](https://github.com/matteocontrini/expelliarbusbot), of course");
+
+            await this.bot.SendTextMessageAsync(
+                chatId: chatId,
+                text: builder.ToString(),
+                parseMode: ParseMode.Markdown
+            );
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
