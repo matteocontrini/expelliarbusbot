@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using CustomConsoleLogger;
+using Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -53,7 +54,7 @@ namespace Bot
         private static void ConfigureLogging(HostBuilderContext hostContext, ILoggingBuilder logging)
         {
             logging.AddConfiguration(hostContext.Configuration.GetSection("Logging"));
-            logging.AddConsole();
+            logging.AddCustomConsole();
         }
 
         private static void ConfigureApp(HostBuilderContext hostContext, IConfigurationBuilder configApp)
@@ -65,6 +66,8 @@ namespace Bot
 
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
+            // TODO CORE 3.0: Change after https://github.com/aspnet/Hosting/issues/1346 is released
+            services.Configure<ConsoleLifetimeOptions>(console => console.SuppressStatusMessages = true);
             services.Configure<BotConfiguration>(hostContext.Configuration.GetSection("Bot"));
 
             string dbPath = Path.Combine(

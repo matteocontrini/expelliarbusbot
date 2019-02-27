@@ -13,7 +13,6 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Telegram.Bot" Version="14.10.0" />
   </ItemGroup>
 
@@ -43,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CustomConsoleLogger\CustomConsoleLogger.csproj" />
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
