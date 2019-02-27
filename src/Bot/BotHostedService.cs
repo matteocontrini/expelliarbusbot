@@ -132,14 +132,21 @@ namespace Bot
 
         private async void OnCallbackQuery(object sender, Telegram.Bot.Args.CallbackQueryEventArgs e)
         {
-            this.logger.LogInformation("CB <{0}> {1}", e.CallbackQuery.Message.Chat.Id, e.CallbackQuery.Data);
+            try
+            {
+                this.logger.LogInformation("CB <{0}> {1}", e.CallbackQuery.Message.Chat.Id, e.CallbackQuery.Data);
 
-            await HandleRouteRequest(
-                chatId: e.CallbackQuery.Message.Chat.Id,
-                messageId: e.CallbackQuery.Message.MessageId,
-                callbackQueryId: e.CallbackQuery.Id,
-                selectedTripId: e.CallbackQuery.Data
-            );
+                await HandleRouteRequest(
+                    chatId: e.CallbackQuery.Message.Chat.Id,
+                    messageId: e.CallbackQuery.Message.MessageId,
+                    callbackQueryId: e.CallbackQuery.Id,
+                    selectedTripId: e.CallbackQuery.Data.Split(';')[1]
+                );
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Callback query exception for: {Query}", e.CallbackQuery.ToJson());
+            }
         }
 
         private void OnReceiveGeneralError(object sender, Telegram.Bot.Args.ReceiveGeneralErrorEventArgs e)
@@ -177,14 +184,13 @@ namespace Bot
             {
                 await HandleStart(message.Chat);
             }
-            // TODO: improve this...
+            // TODO: improve recognition of buttons text
             else if (t.Contains("povo-trento", StringComparison.OrdinalIgnoreCase))
             {
                 await HandleRouteRequest(message.Chat.Id, null, null, null);
             }
             else
             {
-                // TODO: ?
                 await HandleStart(message.Chat);
             }
         }
@@ -223,7 +229,7 @@ namespace Bot
             // Build the output message caption
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine("*Orari alle fermate:*");
+            builder.AppendLine($"*Orari corsa {selectedTripIndex + 1} di {trips.Count}:*");
             builder.AppendLine();
 
             int index = 1;
@@ -251,12 +257,22 @@ namespace Bot
 
             if (selectedTripIndex > 0)
             {
-                kb.Add(InlineKeyboardButton.WithCallbackData("◄ Prec", trips[selectedTripIndex - 1].TripId));
+                kb.Add(
+                    InlineKeyboardButton.WithCallbackData(
+                        text: "◄ Prec",
+                        callbackData: "load;" + trips[selectedTripIndex - 1].TripId
+                    )
+                );
             }
 
             if (selectedTripIndex < trips.Count - 1)
             {
-                kb.Add(InlineKeyboardButton.WithCallbackData("Succ ►", trips[selectedTripIndex + 1].TripId));
+                kb.Add(
+                    InlineKeyboardButton.WithCallbackData(
+                        text: "Succ ►",
+                        callbackData: "load;" + trips[selectedTripIndex + 1].TripId
+                    )
+                );
             }
 
             string mapPath = $"maps/{selectedTrip.ShapeId}.png";
@@ -307,12 +323,8 @@ namespace Bot
                         },
                         replyMarkup: new InlineKeyboardMarkup(kb)
                     );
-
-                    // Visual feedback
-                    await this.bot.AnswerCallbackQueryAsync(
-                        callbackQueryId: callbackQueryId,
-                        text: "✅"
-                    );
+                    
+                    await this.bot.AnswerCallbackQueryAsync(callbackQueryId);
                 }
                 // Send a new message
                 else
