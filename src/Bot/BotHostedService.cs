@@ -5,9 +5,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -110,6 +108,7 @@ namespace Bot
 
             // Register event handlers
             this.bot.OnMessage += OnMessage;
+            this.bot.OnCallbackQuery += OnCallbackQuery;
             this.bot.OnReceiveError += OnReceiveError;
             this.bot.OnReceiveGeneralError += OnReceiveGeneralError;
 
@@ -119,6 +118,18 @@ namespace Bot
 
             // Start getting messages
             this.bot.StartReceiving(cancellationToken: this.tokenSource.Token);
+        }
+
+        private async void OnCallbackQuery(object sender, Telegram.Bot.Args.CallbackQueryEventArgs e)
+        {
+            this.logger.LogInformation("CB <{0}> {1}", e.CallbackQuery.Message.Chat.Id, e.CallbackQuery.Data);
+
+            await HandleRouteRequest(
+                chatId: e.CallbackQuery.Message.Chat.Id,
+                messageId: e.CallbackQuery.Message.MessageId,
+                callbackQueryId: e.CallbackQuery.Id,
+                selectedTripId: e.CallbackQuery.Data
+            );
         }
 
         private void OnReceiveGeneralError(object sender, Telegram.Bot.Args.ReceiveGeneralErrorEventArgs e)
@@ -152,7 +163,7 @@ namespace Bot
             // TODO: improve this...
             else if (t.Contains("povo-trento", StringComparison.OrdinalIgnoreCase))
             {
-                await HandleRouteRequest(message);
+                await HandleRouteRequest(message.Chat.Id, null, null, null);
             }
             else
             {
@@ -161,25 +172,36 @@ namespace Bot
             }
         }
 
-        private async Task HandleRouteRequest(Message message)
+        private async Task HandleRouteRequest(long chatId, int? messageId, string callbackQueryId, string selectedTripId)
         {
             // Get the trips for today
             List<Trip> trips = await this.tripsRepository.GetAllTripsForToday();
 
-            // Get the first trip after the current time
-            string now = DateTime.Now.ToString("HH:mm:ss");
+            int selectedTripIndex;
+            Trip selectedTrip;
+            if (selectedTripId != null)
+            {
+                // Get specific trip with ID
+                selectedTripIndex = trips.FindIndex(x => x.TripId == selectedTripId);
+                selectedTrip = trips[selectedTripIndex];
+            }
+            else
+            {
+                // Get the first trip after the current time
+                string now = DateTime.Now.ToString("HH:mm:ss");
 
-            int nextTripIndex = trips.FindIndex(x => x.DepartureTime.CompareTo(now) >= 0);
-            Trip nextTrip = trips[nextTripIndex];
+                selectedTripIndex = trips.FindIndex(x => x.DepartureTime.CompareTo(now) >= 0);
+                selectedTrip = trips[selectedTripIndex];
+            }
 
-            // No more trips for today (or something went wrong?)
-            if (nextTrip == null)
+            // No more trips for today (or something went very wrong?)
+            if (selectedTrip == null)
             {
                 return;
             }
 
             // Get the list of stops with times from the db
-            List<StopTime> stops = await tripsRepository.GetTrip(nextTrip.TripId);
+            List<StopTime> stops = await tripsRepository.GetTrip(selectedTrip.TripId);
             
             // Build the output message caption
             StringBuilder builder = new StringBuilder();
@@ -210,29 +232,52 @@ namespace Bot
             }
             List<InlineKeyboardButton> kb = new List<InlineKeyboardButton>();
 
-            if (nextTripIndex > 0)
+            if (selectedTripIndex > 0)
             {
-                kb.Add(InlineKeyboardButton.WithCallbackData("◄ Prec", trips[nextTripIndex - 1].TripId));
+                kb.Add(InlineKeyboardButton.WithCallbackData("◄ Prec", trips[selectedTripIndex - 1].TripId));
             }
 
-            if (nextTripIndex < trips.Count - 1)
+            if (selectedTripIndex < trips.Count - 1)
             {
-                kb.Add(InlineKeyboardButton.WithCallbackData("Succ ►", trips[nextTripIndex + 1].TripId));
+                kb.Add(InlineKeyboardButton.WithCallbackData("Succ ►", trips[selectedTripIndex + 1].TripId));
             }
 
-            string mapPath = $"maps/{nextTrip.ShapeId}.png";
+            string mapPath = $"maps/{selectedTrip.ShapeId}.png";
 
             // TODO: cache the file_id instead of uploading the image every time
 
             using (Stream stream = System.IO.File.OpenRead(mapPath))
             {
-                Message response = await this.bot.SendPhotoAsync(
-                    chatId: message.Chat.Id,
-                    photo: stream,
-                    caption: builder.ToString(),
-                    parseMode: ParseMode.Markdown,
-                    replyMarkup: new InlineKeyboardMarkup(kb)
-                );
+                if (messageId.HasValue)
+                {
+                    InputMedia media = new InputMedia(stream, mapPath);
+
+                    await this.bot.EditMessageMediaAsync(
+                        chatId: chatId,
+                        messageId: messageId.Value,
+                        media: new InputMediaPhoto(media)
+                        {
+                            Caption = builder.ToString(),
+                            ParseMode = ParseMode.Markdown
+                        },
+                        replyMarkup: new InlineKeyboardMarkup(kb)
+                    );
+
+                    await this.bot.AnswerCallbackQueryAsync(
+                        callbackQueryId: callbackQueryId,
+                        text: "✅"
+                    );
+                }
+                else
+                {
+                    await this.bot.SendPhotoAsync(
+                        chatId: chatId,
+                        photo: stream,
+                        caption: builder.ToString(),
+                        parseMode: ParseMode.Markdown,
+                        replyMarkup: new InlineKeyboardMarkup(kb)
+                    );
+                }
             }
         }
 
@@ -240,8 +285,8 @@ namespace Bot
         {
             var msgs = new string[]
             {
-                $"🔍 Ciao, {this.me.Username} è il bot sperimentale per consultare gli orari della *linea 5 in partenza da Povo*",
-                "🕑 La fermata Polo Scientifico Ovest ha una leggera priorità, altrimenti viene preso come riferimento l'orario di Povo Valoni",
+                $"🔍 Ciao, {this.me.Username} è il bot sperimentale per consultare gli orari della *linea 5 da Povo a Trento*",
+                "🕑 La fermata Polo Scientifico Ovest ha una leggera priorità. In alternativa viene preso come riferimento l'orario di Povo Valoni",
                 "👀 Ora premi il pulsante qua sotto 👇"
             };
 
