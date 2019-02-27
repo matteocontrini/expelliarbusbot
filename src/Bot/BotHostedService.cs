@@ -169,6 +169,13 @@ namespace Bot
 
                     await HandleTextMessage(e.Message);
                 }
+                else if (e.Message.Type == MessageType.ChatMembersAdded)
+                {
+                    if (e.Message.NewChatMembers.FirstOrDefault(x => x.Username == this.me.Username) != null)
+                    {
+                        await HandleStart(e.Message.Chat);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -185,7 +192,8 @@ namespace Bot
                 await HandleStart(message.Chat);
             }
             // TODO: improve recognition of buttons text
-            else if (t.Contains("povo-trento", StringComparison.OrdinalIgnoreCase))
+            else if (t.Contains("povo-trento", StringComparison.OrdinalIgnoreCase) ||
+                     t.StartsWith("/povotrento"))
             {
                 await HandleRouteRequest(message.Chat.Id, null, null, null);
             }
@@ -356,7 +364,7 @@ namespace Bot
             {
                 $"🔍 Ciao, {this.me.Username} è il bot sperimentale per consultare gli orari della *linea 5 da Povo a Trento*",
                 "🕑 La fermata Polo Scientifico Ovest ha una leggera priorità, e in alternativa viene preso come riferimento l'orario di Povo Valoni",
-                "👀 Ora premi il pulsante qua sotto 👇"
+                chat.Type == ChatType.Private ? "👀 Ora premi il pulsante qua sotto 👇" : "👀 Nei gruppi, usa i comandi /povotrento e /aiuto"
             };
 
             foreach (string message in msgs)
@@ -364,14 +372,14 @@ namespace Bot
                 await this.bot.SendTextMessageAsync(
                     chatId: chat.Id,
                     text: message,
-                    replyMarkup: new ReplyKeyboardMarkup(
-                        new KeyboardButton[]
-                        {
-                            new KeyboardButton("5️⃣ Povo-Trento"),
-                            new KeyboardButton("❓ Aiuto")
-                        },
-                        resizeKeyboard: true
-                    ),
+                    replyMarkup: (chat.Type == ChatType.Private)
+                        ? new ReplyKeyboardMarkup(new KeyboardButton[]
+                            {
+                                new KeyboardButton("5️⃣ Povo-Trento"),
+                                new KeyboardButton("❓ Aiuto")
+                            },
+                            resizeKeyboard: true)
+                        : null,
                     parseMode: ParseMode.Markdown
                 );
             }
