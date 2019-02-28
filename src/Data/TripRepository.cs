@@ -11,11 +11,12 @@ namespace Data
         private readonly string stoptimesQuery;
         private readonly SQLiteAsyncConnection connection;
 
-        public TripRepository(SQLiteAsyncConnection connection)
+        public TripRepository(ISQLiteFactory factory)
         {
+            this.connection = factory.GetConnection("gtfs");
+
             this.tripstodayQuery = File.ReadAllText("queries/trips_today.sql");
             this.stoptimesQuery = File.ReadAllText("queries/stoptimes.sql");
-            this.connection = connection;
         }
 
         public Task<List<Trip>> GetAllTripsForToday()

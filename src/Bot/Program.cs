@@ -68,22 +68,14 @@ namespace Bot
         {
             // TODO CORE 3.0: Change after https://github.com/aspnet/Hosting/issues/1346 is released
             services.Configure<ConsoleLifetimeOptions>(console => console.SuppressStatusMessages = true);
-            services.Configure<BotConfiguration>(hostContext.Configuration.GetSection("Bot"));
 
-            string dbPath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                hostContext.Configuration.GetValue<string>("Database:FileName")
-            );
+            services.UseConfigurationValidation();
+            
+            services.ConfigureValidatableSetting<BotConfiguration>(hostContext.Configuration.GetSection("Bot"));
+            services.ConfigureValidatableSetting<DatabaseConfiguration>(hostContext.Configuration.GetSection("Database"));
 
-            if (!File.Exists(dbPath))
-            {
-                throw new Exception($"Database not found in {dbPath}");
-            }
-
-            services.AddSingleton<SQLiteAsyncConnection>(
-                new SQLiteAsyncConnection(dbPath)
-            );
-
+            // Database things
+            services.AddSingleton<ISQLiteFactory, SQLiteFactory>();
             services.AddTransient<ITripRepository, TripRepository>();
 
             services.AddHostedService<BotHostedService>();
