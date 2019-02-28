@@ -25,13 +25,8 @@ namespace Data
 
             // Create BOT data connection
             dbPath = Path.Combine(Directory.GetCurrentDirectory(), conf.BotDataPath);
-
-            if (!File.Exists(dbPath))
-            {
-                throw new Exception($"BOT database not found in {dbPath}");
-            }
-
-            this.cache["bot"] = new SQLiteAsyncConnection(dbPath);
+            this.cache["bot"] = new SQLiteAsyncConnection(dbPath, storeDateTimeAsTicks: false);
+            this.cache["bot"].CreateTableAsync<ChatEntity>();
         }
 
         public SQLiteAsyncConnection GetConnection(string key)

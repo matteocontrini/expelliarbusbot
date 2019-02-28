@@ -77,6 +77,7 @@ namespace Bot
             // Database things
             services.AddSingleton<ISQLiteFactory, SQLiteFactory>();
             services.AddTransient<ITripRepository, TripRepository>();
+            services.AddTransient<IChatRepository, ChatRepository>();
 
             services.AddHostedService<BotHostedService>();
         }

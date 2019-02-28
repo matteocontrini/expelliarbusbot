@@ -50,6 +50,11 @@ namespace Bot
         private readonly ITripRepository tripsRepository;
 
         /// <summary>
+        /// Data repository for chats information storage
+        /// </summary>
+        private readonly IChatRepository chatRepository;
+
+        /// <summary>
         /// Names of the stops that should be shown as primary stops to the user
         /// </summary>
         private readonly HashSet<string> interestingStops;
@@ -72,12 +77,14 @@ namespace Bot
 
         public BotHostedService(IOptions<BotConfiguration> options,
                                 ILogger<BotHostedService> logger,
-                                ITripRepository tripsRepository)
+                                ITripRepository tripsRepository,
+                                IChatRepository chatRepository)
         {
             this.config = options.Value;
             this.logger = logger;
             this.tripsRepository = tripsRepository;
-            
+            this.chatRepository = chatRepository;
+
             this.interestingStops = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "Povo Piazza Manci",
@@ -163,6 +170,8 @@ namespace Bot
         {
             try
             {
+                await UpdateChat(e.Message.Chat);
+
                 if (e.Message.Type == MessageType.Text)
                 {
                     this.logger.LogInformation("TXT <{0}> {1}", e.Message.Chat.Id, e.Message.Text);
@@ -401,6 +410,22 @@ namespace Bot
                 text: builder.ToString(),
                 parseMode: ParseMode.Markdown
             );
+        }
+
+        private async Task UpdateChat(Chat chat)
+        {
+            ChatEntity chatEntity = new ChatEntity()
+            {
+                ChatId = chat.Id,
+                Type = chat.Type.ToString(),
+                Title = chat.Title,
+                Username = chat.Username,
+                FirstName = chat.FirstName,
+                LastName = chat.LastName,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await this.chatRepository.InsertOrReplaceChat(chatEntity);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
