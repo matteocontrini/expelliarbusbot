@@ -3,10 +3,10 @@ WORKDIR /app
 
 # Copy sln and csproj and try to restore dependencies
 COPY *.sln .
-COPY src/Bot/*.csproj ./src/Bot/
-COPY src/Data/*.csproj ./src/Data/
-COPY src/MapsGenerator/*.csproj ./src/MapsGenerator/
-COPY src/CustomConsoleLogger/*.csproj ./src/CustomConsoleLogger/
+COPY src/Bot/*.csproj ./Bot/
+COPY src/Data/*.csproj ./Data/
+COPY src/MapsGenerator/*.csproj ./MapsGenerator/
+COPY src/CustomConsoleLogger/*.csproj ./CustomConsoleLogger/
 RUN dotnet restore
 
 # Copy all srcs and compile
