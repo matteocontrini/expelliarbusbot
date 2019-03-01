@@ -21,7 +21,11 @@ namespace Data
                 throw new Exception($"GTFS database not found in {dbPath}");
             }
 
-            this.cache["gtfs"] = new SQLiteAsyncConnection(dbPath);
+            this.cache["gtfs"] = new SQLiteAsyncConnection(
+                databasePath: dbPath,
+                // open in read only mode
+                openFlags: SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.FullMutex
+            );
 
             // Create BOT data connection
             dbPath = Path.Combine(Directory.GetCurrentDirectory(), conf.BotDataPath);
