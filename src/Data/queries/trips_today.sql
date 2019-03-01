@@ -7,20 +7,20 @@ FROM trips, stop_times
 
 WHERE trips.route_id = 400
   AND trips.direction_id = 1
-  AND	trips.trip_id = stop_times.trip_id
-  AND	trips.service_id IN (
+  AND trips.trip_id = stop_times.trip_id
+  AND trips.service_id IN (
     SELECT service_id FROM calendar
-          WHERE thursday = 1
-      AND start_date <= strftime('%Y%m%d', date('now'))
-            AND end_date >= strftime('%Y%m%d', date('now'))
-          UNION
-            SELECT service_id FROM calendar_dates
-              WHERE date = strftime('%Y%m%d', date('now'))
-                AND exception_type = 1
-          EXCEPT
-            SELECT service_id FROM calendar_dates
-              WHERE date = strftime('%Y%m%d', date('now'))
-                AND exception_type = 2
+      WHERE thursday = 1
+        AND start_date <= strftime('%Y%m%d', date('now'))
+        AND end_date >= strftime('%Y%m%d', date('now'))
+      UNION
+        SELECT service_id FROM calendar_dates
+          WHERE date = strftime('%Y%m%d', date('now'))
+          AND exception_type = 1
+      EXCEPT
+        SELECT service_id FROM calendar_dates
+          WHERE date = strftime('%Y%m%d', date('now'))
+            AND exception_type = 2
     )
 
 GROUP BY trips.trip_id
