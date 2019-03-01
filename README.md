@@ -32,7 +32,7 @@ Make sure that the `src\Bot` directory contains the `appsettings.json` file and 
 
 Run with the dotnet CLI by executing:
 
-```
+```sh
 cd src/Bot
 dotnet run
 ```
@@ -57,6 +57,12 @@ services:
 This time make sure that the configuration file lies at `src/Bot/appsettings.json`, and put the `gtfs.db` file in `src/Bot/db/gtfs.db`.
 
 Also update the `appsettings.json` file so that the databases paths are `db/gtfs.db` and `db/bot.db`.
+
+Now run this command in the repository directory:
+
+```sh
+docker-compose -f docker-compose.yml up --build
+```
 
 **NOTE**: mapping a dedicated `db` directory is required for database persistence. SQLite  writes temporary files other than the `.db` one, and it does't always clean them before shut down.
 
