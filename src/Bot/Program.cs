@@ -1,10 +1,10 @@
-﻿using CustomConsoleLogger;
+﻿using Bot.Handlers;
+using CustomConsoleLogger;
 using Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SQLite;
 using System;
 using System.IO;
 using System.Threading;
@@ -74,10 +74,16 @@ namespace Bot
             services.ConfigureValidatableSetting<BotConfiguration>(hostContext.Configuration.GetSection("Bot"));
             services.ConfigureValidatableSetting<DatabaseConfiguration>(hostContext.Configuration.GetSection("Database"));
 
+            services.AddMemoryCache();
+
             // Database things
             services.AddSingleton<ISQLiteFactory, SQLiteFactory>();
             services.AddTransient<ITripRepository, TripRepository>();
             services.AddTransient<IChatRepository, ChatRepository>();
+
+            services.AddSingleton<IBotService, BotService>();
+            services.AddScoped<IUpdateProcessor, UpdateProcessor>();
+            services.AddHandlers();
 
             services.AddHostedService<BotHostedService>();
         }
