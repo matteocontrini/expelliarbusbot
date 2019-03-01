@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NodaTime;
+using NodaTime.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -232,7 +234,7 @@ namespace Bot
             else
             {
                 // Get the first trip after the current time
-                string now = DateTime.Now.ToString("HH:mm:ss");
+                string now = GetCurrentTime();
 
                 selectedTripIndex = trips.FindIndex(x => x.DepartureTime.CompareTo(now) >= 0);
                 selectedTrip = trips[selectedTripIndex];
@@ -365,6 +367,15 @@ namespace Bot
                 // Save the file_id of the biggest image representation
                 this.fileIdsCache[mapPath] = sentMessage.Photo.Last().FileId;
             }
+        }
+
+        private string GetCurrentTime()
+        {
+            Instant now = SystemClock.Instance.GetCurrentInstant();
+            DateTimeZone tz = DateTimeZoneProviders.Tzdb["Europe/Rome"];
+            LocalTime time = now.InZone(tz).TimeOfDay;
+            LocalTimePattern pattern = LocalTimePattern.CreateWithInvariantCulture("HH:mm:ss");
+            return pattern.Format(time);
         }
 
         private async Task HandleStart(Chat chat)

@@ -76,6 +76,5 @@ services:
     volumes:
       - ./appsettings.json:/app/appsettings.json
       - ./db:/app/db
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
 ```
+

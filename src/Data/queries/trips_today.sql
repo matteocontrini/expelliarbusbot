@@ -11,15 +11,15 @@ WHERE trips.route_id = 400
   AND trips.service_id IN (
     SELECT service_id FROM calendar
       WHERE thursday = 1
-        AND start_date <= strftime('%Y%m%d', date('now'))
-        AND end_date >= strftime('%Y%m%d', date('now'))
+        AND start_date <= ?
+        AND end_date >= ?
       UNION
         SELECT service_id FROM calendar_dates
-          WHERE date = strftime('%Y%m%d', date('now'))
+          WHERE date = ?
           AND exception_type = 1
       EXCEPT
         SELECT service_id FROM calendar_dates
-          WHERE date = strftime('%Y%m%d', date('now'))
+          WHERE date = ?
             AND exception_type = 2
     )
 
