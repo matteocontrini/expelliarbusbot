@@ -22,13 +22,13 @@ Make sure that you have the .NET Core 2.2 SDK and runtime installed on your syst
 
 ### Visual Studio
 
-Make sure that the `src\Bot\bin\Debug\netcoreapp2.2` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
+Make sure that the `src/Bot/bin/Debug/netcoreapp2.2` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
 
 Run with the nice green button.
 
 ### dotnet CLI
 
-Make sure that the `src\Bot` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
+Make sure that the `sr/Bot` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
 
 Run with the dotnet CLI by executing:
 
