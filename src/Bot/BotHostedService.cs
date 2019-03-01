@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Bot.Exceptions;
 
 namespace Bot
 {
@@ -57,6 +58,14 @@ namespace Bot
                 {
                     // Process the update
                     await updateService.ProcessUpdate(e.Update);
+                }
+                catch (InvalidQueryIdException)
+                {
+                    // ignore
+                }
+                catch (MessageIsNotModifiedException)
+                {
+                    // ignore
                 }
                 catch (Exception ex)
                 {
