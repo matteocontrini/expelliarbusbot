@@ -1,4 +1,7 @@
-﻿using Telegram.Bot;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Bot
@@ -10,7 +13,13 @@ namespace Bot
 
         public BotService(BotConfiguration config)
         {
-            this.Client = new TelegramBotClient(config.BotToken);
+            HttpClient client = new HttpClient(new SocketsHttpHandler()
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(60),
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            });
+
+            this.Client = new TelegramBotClient(config.BotToken, client);
         }
     }
 }
