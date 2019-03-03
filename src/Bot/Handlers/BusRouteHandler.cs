@@ -99,7 +99,7 @@ namespace Bot.Handlers
 
                 // Get specific trip with ID
                 selectedTripIndex = trips.FindIndex(x => x.TripId == tripId);
-                selectedTrip = trips[selectedTripIndex];
+                selectedTrip = trips.ElementAtOrDefault(selectedTripIndex);
             }
             else
             {
@@ -107,12 +107,35 @@ namespace Bot.Handlers
                 string now = GetCurrentTime();
 
                 selectedTripIndex = trips.FindIndex(x => x.DepartureTime.CompareTo(now) >= 0);
-                selectedTrip = trips[selectedTripIndex];
+                selectedTrip = trips.ElementAtOrDefault(selectedTripIndex);
+
+                // If we're after the last trip of the day, show the last one
+                if (selectedTrip == null && trips.Count > 0)
+                {
+                    selectedTripIndex = trips.Count - 1;
+                    selectedTrip = trips[selectedTripIndex];
+                }
             }
 
-            // No more trips for today (or something went very wrong?)
+            // Wrong trip ID or missing data?
             if (selectedTrip == null)
             {
+                if (this.CallbackQuery != null)
+                {
+                    await this.bot.Client.AnswerCallbackQueryAsync(
+                        callbackQueryId: this.CallbackQuery.Id,
+                        text: "❗ Nessuna corsa disponibile",
+                        showAlert: true
+                    );
+                }
+                else
+                {
+                    await this.bot.Client.SendTextMessageAsync(
+                        chatId: this.Chat.Id,
+                        text: "❗ Nessuna corsa disponibile"
+                    );
+                }
+
                 return;
             }
 
