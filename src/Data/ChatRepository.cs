@@ -16,5 +16,10 @@ namespace Data
         {
             return this.connection.InsertOrReplaceAsync(chat);
         }
+
+        public Task DeleteChat(long id)
+        {
+            return this.connection.DeleteAsync<ChatEntity>(id);
+        }
     }
 }

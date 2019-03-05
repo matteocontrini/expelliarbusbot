@@ -66,7 +66,8 @@ namespace Bot
             }
             else if (message.Type == MessageType.MigratedToSupergroup)
             {
-                // TODO: migrate chat ID
+                // Remove the old instance
+                await this.chatRepository.DeleteChat(message.Chat.Id);
             }
             else if (message.Type == MessageType.Text)
             {
@@ -123,7 +124,7 @@ namespace Bot
             }
         }
 
-        private async Task LogChat(Chat chat)
+        private Task LogChat(Chat chat)
         {
             ChatEntity chatEntity = new ChatEntity()
             {
@@ -136,7 +137,7 @@ namespace Bot
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await this.chatRepository.InsertOrReplaceChat(chatEntity);
+            return this.chatRepository.InsertOrReplaceChat(chatEntity);
         }
     }
 }
