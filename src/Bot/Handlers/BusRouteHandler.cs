@@ -87,18 +87,28 @@ namespace Bot.Handlers
 
         public override async Task Run()
         {
+            string selectedTripId = null;
+
+            if (this.CallbackQuery != null)
+            {
+                string[] data = this.CallbackQuery.Data.Split(';');
+
+                if (data[0] == "load")
+                {
+                    selectedTripId = data[1];
+                }
+            }
+
             // Get the trips for today
             List<Trip> trips = await this.tripRepository.GetAllTripsForToday();
 
             int selectedTripIndex;
             Trip selectedTrip;
 
-            if (this.CallbackQuery != null)
+            if (selectedTripId != null)
             {
-                string tripId = this.CallbackQuery.Data.Split(';')[1];
-
                 // Get specific trip with ID
-                selectedTripIndex = trips.FindIndex(x => x.TripId == tripId);
+                selectedTripIndex = trips.FindIndex(x => x.TripId == selectedTripId);
                 selectedTrip = trips.ElementAtOrDefault(selectedTripIndex);
             }
             else
@@ -176,17 +186,24 @@ namespace Bot.Handlers
             {
                 row.Add(
                     InlineKeyboardButton.WithCallbackData(
-                        text: "◄ Prec",
+                        text: "◀",
                         callbackData: "load;" + trips[selectedTripIndex - 1].TripId
                     )
                 );
             }
 
+            row.Add(
+                InlineKeyboardButton.WithCallbackData(
+                    text: "🔄",
+                    callbackData: "reload;400" // 400 is the route ID for line 5
+                )
+            );
+
             if (selectedTripIndex < trips.Count - 1)
             {
                 row.Add(
                     InlineKeyboardButton.WithCallbackData(
-                        text: "Succ ►",
+                        text: "▶",
                         callbackData: "load;" + trips[selectedTripIndex + 1].TripId
                     )
                 );
