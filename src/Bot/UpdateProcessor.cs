@@ -37,7 +37,9 @@ namespace Bot
             }
             else if (update.Type == UpdateType.CallbackQuery)
             {
-                await HandlerCallbackQuery(update.CallbackQuery);
+                await LogChat(update.CallbackQuery.From);
+
+                await HandleCallbackQuery(update.CallbackQuery);
             }
         }
 
@@ -82,7 +84,7 @@ namespace Bot
             }
         }
 
-        private Task HandlerCallbackQuery(CallbackQuery callbackQuery)
+        private Task HandleCallbackQuery(CallbackQuery callbackQuery)
         {
             this.logger.LogInformation("CB <{0}> {1}", callbackQuery.Message.Chat.Id, callbackQuery.Data);
 
@@ -131,6 +133,21 @@ namespace Bot
                 ChatId = chat.Id,
                 Type = chat.Type.ToString(),
                 Title = chat.Title,
+                Username = chat.Username,
+                FirstName = chat.FirstName,
+                LastName = chat.LastName,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            return this.chatRepository.InsertOrReplaceChat(chatEntity);
+        }
+
+        private Task LogChat(User chat)
+        {
+            ChatEntity chatEntity = new ChatEntity()
+            {
+                ChatId = chat.Id,
+                Type = ChatType.Private.ToString(),
                 Username = chat.Username,
                 FirstName = chat.FirstName,
                 LastName = chat.LastName,
