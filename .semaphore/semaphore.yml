@@ -1,23 +1,17 @@
-# Find an example for your language and learn about the core features through
-# the guided tour:
-# https://docs.semaphoreci.com/category/58-programming-languages
-# https://docs.semaphoreci.com/category/56-guided-tour
 version: v1.0
-name: Hello Semaphore
+name: Nome di cosa?
 agent:
   machine:
     type: e1-standard-2
-    os_image: ubuntu1804
+  containers:
+    - name: main
+      image: mcr.microsoft.com/dotnet/core/sdk:2.2
 blocks:
-  - name: Simple example
+  - name: Build
     task:
-      env_vars:
-        - name: APP_ENV
-          value: prod
       jobs:
-      - name: Download our code
+      - name: Build
         commands:
-          - echo "Hello from Semaphore!"
-          - echo $APP_ENV
           - checkout
-          - ls -alh
+          - ls -lah
+          - dotnet build
