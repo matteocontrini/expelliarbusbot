@@ -22,5 +22,5 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        echo $PASSWORD > docker login -u $USERNAME --password-stdin
+        echo $DOCKER_PASSWORD > docker login -u $DOCKER_USERNAME --password-stdin
         docker push matteocontrini/expelliarbusbot
