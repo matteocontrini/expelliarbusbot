@@ -1,0 +1,19 @@
+name: Docker Hub
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Build Docker image
+      run: docker build -t matteocontrini/expelliarbusbot .
+    
+    - name: Push to Docker Hub
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker push matteocontrini/expelliarbusbot
