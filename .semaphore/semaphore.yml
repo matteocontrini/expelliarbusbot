@@ -5,7 +5,7 @@ agent:
     type: e1-standard-2
   containers:
     - name: main
-      image: mcr.microsoft.com/dotnet/core/sdk:2.2
+      image: microsoft/dotnet:2.2-sdk
 blocks:
   - name: Build
     task:
