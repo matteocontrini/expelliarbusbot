@@ -1,12 +1,11 @@
 version: v1.0
 name: Nome di cosa?
-agent:
-  machine:
-    type: e1-standard-2
 
 blocks:
   - name: Build and test
     agent:
+      machine:
+        type: e1-standard-2
       containers:
       - name: main
         image: microsoft/dotnet:2.2-sdk
