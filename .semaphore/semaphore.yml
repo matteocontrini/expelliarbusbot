@@ -20,3 +20,14 @@ blocks:
         commands:
           - checkout
           - dotnet test
+          
+  - name: Docker
+    task:
+      jobs:
+      - name: Build Docker image
+        commands:
+          - checkout
+          - ls -lah
+          - docker build -t expelliarbus .
+          - docker images
+          - ls -lah
