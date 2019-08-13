@@ -17,10 +17,11 @@ jobs:
         docker tag bot matteocontrini/expelliarbusbot:$(git rev-parse --short HEAD)
         docker images
     
-    - name: Push to Docker Hub
+    - name: Login to Docker Hub
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: |
-        echo $DOCKER_PASSWORD > docker login -u $DOCKER_USERNAME --password-stdin
-        docker push matteocontrini/expelliarbusbot
+      run: echo $DOCKER_PASSWORD > docker login -u $DOCKER_USERNAME --password-stdin
+    
+    - name: Push to Docker Hub
+      run: docker push matteocontrini/expelliarbusbot
