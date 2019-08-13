@@ -1,6 +1,11 @@
 version: v1.0
 name: Nome di cosa?
 
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+
 blocks:
   - name: Build and test
     
@@ -26,12 +31,7 @@ blocks:
           
   - name: Docker
     
-    task:
-      agent:
-        machine:
-          type: e1-standard-2
-          os_image: ubuntu1804
-        
+    task:        
       jobs:
       - name: Build Docker image
         commands:
