@@ -3,11 +3,13 @@ name: Nome di cosa?
 agent:
   machine:
     type: e1-standard-2
-  containers:
-    - name: main
-      image: microsoft/dotnet:2.2-sdk
+
 blocks:
   - name: Build and test
+    agent:
+      containers:
+      - name: main
+        image: microsoft/dotnet:2.2-sdk
     task:
       jobs:
       - name: Build
@@ -23,6 +25,9 @@ blocks:
           
   - name: Docker
     task:
+      agent:
+        machine:
+          os_image: ubuntu1804
       jobs:
       - name: Build Docker image
         commands:
