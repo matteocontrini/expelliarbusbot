@@ -15,6 +15,7 @@ jobs:
         docker build -t bot .
         docker tag bot matteocontrini/expelliarbusbot:latest
         docker tag bot matteocontrini/expelliarbusbot:$(git rev-parse --short HEAD)
+        docker images
     
     - name: Push to Docker Hub
       run: |
