@@ -11,7 +11,10 @@ jobs:
     - uses: actions/checkout@master
     
     - name: Build Docker image
-      run: docker build -t matteocontrini/expelliarbusbot .
+      run: |
+        docker build -t bot .
+        docker tag bot matteocontrini/expelliarbusbot:latest
+        docker tag bot matteocontrini/expelliarbusbot:$(git rev-parse --short HEAD)
     
     - name: Push to Docker Hub
       run: |
