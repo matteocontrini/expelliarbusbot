@@ -7,7 +7,7 @@ agent:
     - name: main
       image: microsoft/dotnet:2.2-sdk
 blocks:
-  - name: Build
+  - name: Build and test
     task:
       jobs:
       - name: Build
@@ -15,3 +15,8 @@ blocks:
           - checkout
           - ls -lah
           - dotnet build
+          
+      - name: Test
+        commands:
+          - checkout
+          - dotnet test
