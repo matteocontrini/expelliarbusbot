@@ -5,12 +5,12 @@ blocks:
   - name: Build and test
     
     task:
-        agent:
-        machine:
-          type: e1-standard-2
-        containers:
-        - name: main
-          image: microsoft/dotnet:2.2-sdk
+      agent:
+      machine:
+        type: e1-standard-2
+      containers:
+      - name: main
+        image: microsoft/dotnet:2.2-sdk
 
       jobs:
       - name: Build
