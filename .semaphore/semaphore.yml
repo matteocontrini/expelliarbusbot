@@ -23,11 +23,11 @@ blocks:
           - dotnet test
           
   - name: Docker
+    agent:
+      machine:
+        type: e1-standard-2
+        os_image: ubuntu1804
     task:
-      agent:
-        machine:
-          type: e1-standard-2
-          os_image: ubuntu1804
       jobs:
       - name: Build Docker image
         commands:
