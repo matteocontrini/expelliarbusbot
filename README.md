@@ -1,4 +1,4 @@
-# ExpelliarbusBot [![Build Status](https://travis-ci.com/matteocontrini/expelliarbusbot.svg?branch=master)](https://travis-ci.com/matteocontrini/expelliarbusbot)
+# ExpelliarbusBot
 
 [Screenshots](stuff/screenshots)
 
