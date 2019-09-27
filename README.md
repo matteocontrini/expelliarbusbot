@@ -6,7 +6,7 @@
 
 - Clone the repository
 - Download [`google_transit_urbano.zip`](https://www.trentinotrasporti.it/opendata/google_transit_urbano_tte.zip) and extract the contents in `stuff/queries/gtfs`
-- Run `sqlite3 < import.sql` in `stuff/queries` to create a database with GTFS data
+- Run `sqlite3 gtfs.db < import.sql` in `stuff/queries` to create a database with GTFS data
 
 Consider that GTFS data from Trentino Trasporti is updated without notice, so this needs to be repeated every now and then.
 
@@ -28,7 +28,7 @@ Run with the nice green button.
 
 ### dotnet CLI
 
-Make sure that the `sr/Bot` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
+Make sure that the `src/Bot` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
 
 Run with the dotnet CLI by executing:
 
