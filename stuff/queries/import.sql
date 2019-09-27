@@ -12,7 +12,6 @@
 .import gtfs/shapes.txt shapes
 .import gtfs/stops.txt stops
 .import gtfs/stop_times.txt stop_times
-.import gtfs/stopslevel.txt stopslevel
 .import gtfs/transfers.txt transfers
 .import gtfs/trips.txt trips
 
