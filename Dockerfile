@@ -1,4 +1,4 @@
-﻿FROM microsoft/dotnet:2.2-sdk AS build
+﻿FROM mcr.microsoft.com/dotnet/core/sdk:2.2.401 AS build
 WORKDIR /app
 
 # Copy sln and csproj and try to restore dependencies
@@ -18,7 +18,7 @@ FROM build AS publish
 WORKDIR /app/src/Bot
 RUN dotnet publish -c Release -o out
 
-FROM microsoft/dotnet:2.2-runtime AS runtime
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS runtime
 WORKDIR /app
 COPY --from=publish /app/src/Bot/out ./
 ENTRYPOINT ["dotnet", "Bot.dll"]
