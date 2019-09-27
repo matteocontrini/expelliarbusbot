@@ -1,14 +1,14 @@
-﻿using Bot.Handlers;
-using CustomConsoleLogger;
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Bot.Handlers;
 using Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using PlainConsoleLogger;
 
 namespace Bot
 {
@@ -28,7 +28,7 @@ namespace Bot
                 .ConfigureAppConfiguration(ConfigureApp)
                 .ConfigureServices(ConfigureServices)
                 .ConfigureLogging(ConfigureLogging)
-                .UseConsoleLifetime()
+                .UseConsoleLifetime(opts => opts.SuppressStatusMessages = true)
                 .Build();
 
             // Get the logger
@@ -54,7 +54,7 @@ namespace Bot
         private static void ConfigureLogging(HostBuilderContext hostContext, ILoggingBuilder logging)
         {
             logging.AddConfiguration(hostContext.Configuration.GetSection("Logging"));
-            logging.AddCustomConsole();
+            logging.AddPlainConsole();
         }
 
         private static void ConfigureApp(HostBuilderContext hostContext, IConfigurationBuilder configApp)
@@ -66,9 +66,6 @@ namespace Bot
 
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
-            // TODO CORE 3.0: Change after https://github.com/aspnet/Hosting/issues/1346 is released
-            services.Configure<ConsoleLifetimeOptions>(console => console.SuppressStatusMessages = true);
-
             services.UseConfigurationValidation();
             
             services.ConfigureValidatableSetting<BotConfiguration>(hostContext.Configuration.GetSection("Bot"));
