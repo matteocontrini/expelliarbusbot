@@ -260,6 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 
-
-# custom
 appsettings.json
+stuff/queries/gtfs
