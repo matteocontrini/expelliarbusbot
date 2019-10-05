@@ -231,6 +231,13 @@ namespace Bot.Handlers
             row.Add(
                 InlineKeyboardButton.WithCallbackData(
                     text: "🔄",
+                    callbackData: $"load;{selectedTrip.TripId}"
+                )
+            );
+
+            row.Add(
+                InlineKeyboardButton.WithCallbackData(
+                    text: "🔽",
                     callbackData: "reload;400" // 400 is the route ID for line 5
                 )
             );
