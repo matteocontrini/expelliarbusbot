@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using NodaTime.Text;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
@@ -270,7 +271,10 @@ namespace Bot.Handlers
                     string fileId = await SendOrUpdate(stream, null, caption.ToString(), kb);
 
                     // Save file_id to cache
-                    this.fileIdsCache.Set(mapPath, fileId);
+                    if (fileId != null)
+                    {
+                        this.fileIdsCache.Set(mapPath, fileId);
+                    }
                 }
             }
         }
@@ -299,19 +303,33 @@ namespace Bot.Handlers
                     media = new InputMedia(stream, "file.png");
                 }
 
-                // Replace the existing message (photo and caption)
-                sentMessage = await this.bot.Client.EditMessageMediaAsync(
-                    chatId: this.Chat.Id,
-                    messageId: this.CallbackQuery.Message.MessageId,
-                    media: new InputMediaPhoto(media)
-                    {
-                        Caption = caption,
-                        ParseMode = ParseMode.Markdown
-                    },
-                    replyMarkup: kb
-                );
+                try
+                {
+                    // Replace the existing message (photo and caption)
+                    sentMessage = await this.bot.Client.EditMessageMediaAsync(
+                        chatId: this.Chat.Id,
+                        messageId: this.CallbackQuery.Message.MessageId,
+                        media: new InputMediaPhoto(media)
+                        {
+                            Caption = caption,
+                            ParseMode = ParseMode.Markdown
+                        },
+                        replyMarkup: kb
+                    );
+                }
+                catch (MessageIsNotModifiedException)
+                {
+                    await this.bot.Client.AnswerCallbackQueryAsync(
+                        callbackQueryId: this.CallbackQuery.Id,
+                        text: "✅ Nessun aggiornamento"
+                    );
 
-                await this.bot.Client.AnswerCallbackQueryAsync(this.CallbackQuery.Id);
+                    return null;
+                }
+                finally
+                {
+                    await this.bot.Client.AnswerCallbackQueryAsync(this.CallbackQuery.Id);
+                }
             }
             // Send a new message
             else
