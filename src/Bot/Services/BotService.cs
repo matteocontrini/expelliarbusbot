@@ -4,7 +4,7 @@ using System.Net.Http;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Bot
+namespace Bot.Services
 {
     public class BotService : IBotService
     {

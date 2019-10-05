@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Bot
+namespace Bot.Services
 {
     public class UpdateProcessor : IUpdateProcessor
     {

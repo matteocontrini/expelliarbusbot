@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot.Exceptions;
 
-namespace Bot
+namespace Bot.Services
 {
     public class BotHostedService : IHostedService
     {

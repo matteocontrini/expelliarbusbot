@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace Bot
+namespace Bot.Services
 {
     public interface IUpdateProcessor
     {
