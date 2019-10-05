@@ -79,6 +79,8 @@ namespace Bot
             services.AddTransient<ITripRepository, TripRepository>();
             services.AddTransient<IChatRepository, ChatRepository>();
 
+            services.AddTransient<IDelaysService, DelaysService>();
+
             services.AddSingleton<IBotService, BotService>();
             services.AddScoped<IUpdateProcessor, UpdateProcessor>();
             services.AddHandlers();

@@ -42,13 +42,17 @@ namespace Bot.Handlers
         /// </summary>
         private readonly IMemoryCache fileIdsCache;
 
+        private readonly IDelaysService delaysService;
+
         public BusRouteHandler(IBotService botService,
                                ITripRepository tripRepository,
-                               IMemoryCache cache)
+                               IMemoryCache cache,
+                               IDelaysService delaysService)
         {
             this.bot = botService;
             this.tripRepository = tripRepository;
             this.fileIdsCache = cache;
+            this.delaysService = delaysService;
 
             this.interestingStops = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -178,6 +182,24 @@ namespace Bot.Handlers
                     caption.AppendLine($"▶ {time} ({s.StopName})");
 
                     index++;
+                }
+            }
+
+            double? delay = await this.delaysService.GetDelay(selectedTrip.TripId);
+
+            if (delay != null)
+            {
+                caption.AppendLine();
+
+                if (delay == 0)
+                {
+                    caption.Append("✅ *IN ORARIO*");
+                }
+                else if (delay > 0)
+                {
+                    caption.Append("⚠ *RITARDO ");
+                    caption.Append(delay);
+                    caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
                 }
             }
 
