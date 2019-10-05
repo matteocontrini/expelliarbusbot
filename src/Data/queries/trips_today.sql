@@ -10,7 +10,7 @@ WHERE trips.route_id = 400
   AND trips.trip_id = stop_times.trip_id
   AND trips.service_id IN (
     SELECT service_id FROM calendar
-      WHERE thursday = 1
+      WHERE {dayOfWeek} = 1
         AND start_date <= ?
         AND end_date >= ?
       UNION

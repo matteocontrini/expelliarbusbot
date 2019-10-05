@@ -30,7 +30,10 @@ namespace Data
             LocalDatePattern pattern = LocalDatePattern.CreateWithInvariantCulture("yyyyMMdd");
             string date = pattern.Format(today);
 
-            return this.connection.QueryAsync<Trip>(tripstodayQuery, date, date, date, date);
+            string dayOfWeek = today.DayOfWeek.ToString().ToLower();
+            string query = tripstodayQuery.Replace("{dayOfWeek}", dayOfWeek);
+
+            return this.connection.QueryAsync<Trip>(query, date, date, date, date);
         }
 
         public Task<List<StopTime>> GetTrip(string tripId)
