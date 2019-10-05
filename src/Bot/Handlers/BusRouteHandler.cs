@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Bot.Services;
 using Data;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 using NodaTime.Text;
 using Telegram.Bot.Types;
@@ -43,16 +44,19 @@ namespace Bot.Handlers
         private readonly IMemoryCache fileIdsCache;
 
         private readonly IDelaysService delaysService;
+        private readonly ILogger<BusRouteHandler> logger;
 
         public BusRouteHandler(IBotService botService,
                                ITripRepository tripRepository,
                                IMemoryCache cache,
-                               IDelaysService delaysService)
+                               IDelaysService delaysService,
+                               ILogger<BusRouteHandler> logger)
         {
             this.bot = botService;
             this.tripRepository = tripRepository;
             this.fileIdsCache = cache;
             this.delaysService = delaysService;
+            this.logger = logger;
 
             this.interestingStops = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -92,7 +96,7 @@ namespace Bot.Handlers
 
         public override async Task Run()
         {
-            string selectedTripId = null;
+            string requestedTripId = null;
 
             if (this.CallbackQuery != null)
             {
@@ -100,7 +104,7 @@ namespace Bot.Handlers
 
                 if (data[0] == "load")
                 {
-                    selectedTripId = data[1];
+                    requestedTripId = data[1];
                 }
             }
 
@@ -110,10 +114,10 @@ namespace Bot.Handlers
             int selectedTripIndex;
             Trip selectedTrip;
 
-            if (selectedTripId != null)
+            if (requestedTripId != null)
             {
                 // Get specific trip with ID
-                selectedTripIndex = trips.FindIndex(x => x.TripId == selectedTripId);
+                selectedTripIndex = trips.FindIndex(x => x.TripId == requestedTripId);
                 selectedTrip = trips.ElementAtOrDefault(selectedTripIndex);
             }
             else
@@ -153,6 +157,8 @@ namespace Bot.Handlers
 
                 return;
             }
+
+            this.logger.LogInformation("Sending trip {TripId}", selectedTrip.TripId);
 
             // Get the list of stops with times from the db
             List<StopTime> stops = await this.tripRepository.GetTrip(selectedTrip.TripId);
