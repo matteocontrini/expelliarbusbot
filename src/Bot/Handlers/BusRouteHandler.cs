@@ -326,10 +326,8 @@ namespace Bot.Handlers
 
                     return null;
                 }
-                finally
-                {
-                    await this.bot.Client.AnswerCallbackQueryAsync(this.CallbackQuery.Id);
-                }
+
+                await this.bot.Client.AnswerCallbackQueryAsync(this.CallbackQuery.Id);
             }
             // Send a new message
             else
