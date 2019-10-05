@@ -55,17 +55,12 @@ namespace Bot.Services
                 return null;
             }
 
-            if (delay >= 0)
-            {
-                DateTimeOffset expiration = lastEvent.AddSeconds(30);
-                this.logger.LogInformation($"Writing delay {cachedDelay} to {cacheKey} until {expiration}");
+            DateTimeOffset expiration = lastEvent.AddSeconds(30);
+            this.logger.LogInformation($"Writing delay {delay} to {cacheKey} until {expiration}");
 
-                this.cache.Set(cacheKey, delay, expiration);
+            this.cache.Set(cacheKey, delay, expiration);
 
-                return delay;
-            }
-
-            return null;
+            return delay;
         }
     }
 }

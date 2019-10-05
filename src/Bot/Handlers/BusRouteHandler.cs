@@ -207,6 +207,13 @@ namespace Bot.Handlers
                     caption.Append(delay);
                     caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
                 }
+                else
+                {
+                    delay = Math.Abs(delay.Value);
+                    caption.Append("✅ *ANTICIPO ");
+                    caption.Append(delay);
+                    caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
+                }
             }
 
             List<InlineKeyboardButton> row = new List<InlineKeyboardButton>();
