@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bot.Exceptions;
 using Bot.Services;
 using Data;
 using Microsoft.Extensions.Caching.Memory;
@@ -192,10 +193,10 @@ namespace Bot.Handlers
                 }
             }
 
-            double? delay = await this.delaysService.GetDelay(selectedTrip.TripId);
-
-            if (delay != null)
+            try
             {
+                double delay = await this.delaysService.GetDelay(selectedTrip.TripId);
+
                 caption.AppendLine();
 
                 if (delay == 0)
@@ -210,11 +211,19 @@ namespace Bot.Handlers
                 }
                 else
                 {
-                    delay = Math.Abs(delay.Value);
+                    delay = Math.Abs(delay);
                     caption.Append("✅ *ANTICIPO ");
                     caption.Append(delay);
                     caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
                 }
+            }
+            catch (EndOfRouteException)
+            {
+                caption.AppendLine();
+                caption.Append("✅ *CAPOLINEA*");
+            }
+            catch (DataNotAvailableException)
+            {
             }
 
             List<InlineKeyboardButton> row = new List<InlineKeyboardButton>();

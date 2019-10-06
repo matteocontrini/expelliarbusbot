@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Bot.Exceptions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using PlainHttp;
 
 namespace Bot.Services
@@ -20,7 +21,7 @@ namespace Bot.Services
             this.logger = logger;
         }
 
-        public async Task<double?> GetDelay(string tripId)
+        public async Task<double> GetDelay(string tripId)
         {
             string cacheKey = $"delays/{tripId}";
 
@@ -41,18 +42,28 @@ namespace Bot.Services
 
             double delay;
             DateTimeOffset lastEvent;
+            int endOfRouteStopId;
+            int currentStopId;
 
             try
             {
                 HttpResponse response = await request.SendAsync();
 
-                JsonDocument json = JsonDocument.Parse(response.Body);
-                delay = json.RootElement.GetProperty("delay").GetDouble();
-                lastEvent = json.RootElement.GetProperty("lastEventRecivedAt").GetDateTimeOffset();
+                JObject json = JObject.Parse(response.Body);
+
+                delay = json["delay"].ToObject<double>();
+                lastEvent = json["lastEventRecivedAt"].ToObject<DateTimeOffset>();
+                endOfRouteStopId = json["stopTimes"].Last["stopId"].ToObject<int>();
+                currentStopId = json["stopLast"].ToObject<int>();
             }
             catch
             {
-                return null;
+                throw new DataNotAvailableException();
+            }
+
+            if (endOfRouteStopId == currentStopId)
+            {
+                throw new EndOfRouteException();
             }
 
             DateTimeOffset expiration = lastEvent.AddSeconds(30);
