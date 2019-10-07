@@ -1,5 +1,5 @@
-﻿using SQLite;
-using System;
+﻿using System;
+using SQLite;
 
 namespace Data
 {
@@ -24,6 +24,9 @@ namespace Data
 
         [Column("last_name")]
         public string LastName { get; set; }
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
 
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }

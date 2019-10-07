@@ -1,5 +1,7 @@
-﻿using SQLite;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using SQLite;
 
 namespace Data
 {
@@ -12,9 +14,23 @@ namespace Data
             this.connection = factory.GetConnection("bot");
         }
 
-        public Task InsertOrReplaceChat(ChatEntity chat)
+        public async Task InsertOrUpdateChat(ChatEntity chat)
         {
-            return this.connection.InsertOrReplaceAsync(chat);
+            ChatEntity existing = (await this.connection.QueryAsync<ChatEntity>("SELECT * FROM chats WHERE chat_id = ?", chat.ChatId))
+                .SingleOrDefault();
+
+            if (existing == null)
+            {
+                chat.UpdatedAt = DateTime.UtcNow;
+                chat.CreatedAt = DateTime.UtcNow;
+                await this.connection.InsertAsync(chat);
+            }
+            else
+            {
+                chat.CreatedAt = existing.CreatedAt;
+                chat.UpdatedAt = DateTime.UtcNow;
+                await this.connection.UpdateAsync(chat);
+            }
         }
 
         public Task DeleteChat(long id)

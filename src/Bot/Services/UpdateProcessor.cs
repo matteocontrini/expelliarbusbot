@@ -1,9 +1,9 @@
-﻿using Bot.Handlers;
-using Data;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Bot.Handlers;
+using Data;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -135,11 +135,10 @@ namespace Bot.Services
                 Title = chat.Title,
                 Username = chat.Username,
                 FirstName = chat.FirstName,
-                LastName = chat.LastName,
-                UpdatedAt = DateTime.UtcNow
+                LastName = chat.LastName
             };
 
-            return this.chatRepository.InsertOrReplaceChat(chatEntity);
+            return this.chatRepository.InsertOrUpdateChat(chatEntity);
         }
 
         private Task LogChat(User chat)
@@ -150,11 +149,10 @@ namespace Bot.Services
                 Type = ChatType.Private.ToString(),
                 Username = chat.Username,
                 FirstName = chat.FirstName,
-                LastName = chat.LastName,
-                UpdatedAt = DateTime.UtcNow
+                LastName = chat.LastName
             };
 
-            return this.chatRepository.InsertOrReplaceChat(chatEntity);
+            return this.chatRepository.InsertOrUpdateChat(chatEntity);
         }
     }
 }
