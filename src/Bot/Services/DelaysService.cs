@@ -54,7 +54,8 @@ namespace Bot.Services
                 delay = json["delay"].ToObject<double>();
                 lastEvent = json["lastEventRecivedAt"].ToObject<DateTimeOffset>();
                 endOfRouteStopId = json["stopTimes"].Last["stopId"].ToObject<int>();
-                currentStopId = json["stopLast"].ToObject<int>();
+                // use stopNext because sometimes the last stop is never reached
+                currentStopId = json["stopNext"].ToObject<int>();
             }
             catch
             {
