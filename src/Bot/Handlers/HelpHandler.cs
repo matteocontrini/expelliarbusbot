@@ -29,6 +29,7 @@ namespace Bot.Handlers
             await this.bot.Client.SendTextMessageAsync(
                 chatId: this.Chat.Id,
                 text: builder.ToString(),
+                replyMarkup: this.bot.GetDefaultKeyboard(this.Chat.Type),
                 parseMode: ParseMode.Markdown
             );
         }

@@ -3,12 +3,17 @@ using System.Net;
 using System.Net.Http;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Services
 {
     public class BotService : IBotService
     {
+        private ReplyKeyboardMarkup menuMarkup;
+
         public TelegramBotClient Client { get; }
+
         public User Me { get; set;  }
 
         public BotService(BotConfiguration config)
@@ -20,6 +25,25 @@ namespace Bot.Services
             });
 
             this.Client = new TelegramBotClient(config.BotToken, client);
+
+            this.menuMarkup = new ReplyKeyboardMarkup(new KeyboardButton[]
+                            {
+                                new KeyboardButton("5️⃣ Povo-Trento"),
+                                new KeyboardButton("❓ Aiuto")
+                            },
+                            resizeKeyboard: true);
+        }
+
+        public IReplyMarkup GetDefaultKeyboard(ChatType chatType)
+        {
+            if (chatType == ChatType.Private)
+            {
+                return this.menuMarkup;
+            }
+            else
+            {
+                return new ReplyKeyboardRemove();
+            }
         }
     }
 }

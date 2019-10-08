@@ -28,14 +28,7 @@ namespace Bot.Handlers
                 await this.bot.Client.SendTextMessageAsync(
                     chatId: this.Chat.Id,
                     text: message,
-                    replyMarkup: (this.Chat.Type == ChatType.Private)
-                        ? new ReplyKeyboardMarkup(new KeyboardButton[]
-                            {
-                                new KeyboardButton("5️⃣ Povo-Trento"),
-                                new KeyboardButton("❓ Aiuto")
-                            },
-                            resizeKeyboard: true)
-                        : null,
+                    replyMarkup: this.bot.GetDefaultKeyboard(this.Chat.Type),
                     parseMode: ParseMode.Markdown
                 );
             }
