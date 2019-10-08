@@ -22,6 +22,8 @@ namespace Bot.Handlers
             builder.AppendLine();
             builder.AppendLine("🕑 La fermata Polo Scientifico Ovest ha una leggera priorità, e in alternativa viene preso come riferimento l'orario di Povo Valoni");
             builder.AppendLine();
+            builder.AppendLine("🕑 Il bot indica anche i *ritardi in tempo reale*, se disponibili. Non sono mostrate informazioni se la corsa non è ancora partita");
+            builder.AppendLine();
             builder.AppendLine("🤯 Il bot è stato sviluppato da @matteocontrini. Un ringraziamento speciale a [Dario Crisafulli](https://botfactory.it/#chisiamo) per il logo 👏");
             builder.AppendLine();
             builder.Append("🤓 Il bot è [open source](https://github.com/matteocontrini/expelliarbusbot), of course");

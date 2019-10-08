@@ -19,7 +19,7 @@ namespace Bot.Handlers
             string[] msgs = new string[]
             {
                 $"🔍 Ciao, {this.bot.Me.Username} è il bot sperimentale per consultare gli orari della *linea 5 da Povo a Trento*",
-                "🕑 La fermata Polo Scientifico Ovest ha una leggera priorità, e in alternativa viene preso come riferimento l'orario di Povo Valoni",
+                "🕑 Il bot indica anche i *ritardi in tempo reale*, se disponibili. Non sono mostrate informazioni se la corsa non è ancora partita",
                 this.Chat.Type == ChatType.Private ? "👀 Ora premi il pulsante qua sotto 👇" : "👀 Nei gruppi, usa i comandi /povotrento e /aiuto"
             };
 
