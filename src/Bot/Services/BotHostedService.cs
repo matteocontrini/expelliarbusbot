@@ -67,6 +67,10 @@ namespace Bot.Services
                 {
                     // ignore
                 }
+                catch (ApiRequestException ex) when (ex.Message == "Bad Request: cancelled by new editMessageMedia request")
+                {
+                    // ignore
+                }
                 catch (Exception ex)
                 {
                     this.logger.LogError(ex, "Exception [{Message}] while handling update {Update}",
