@@ -59,7 +59,7 @@ namespace Bot.Services
                     // Process the update
                     await updateService.ProcessUpdate(e.Update);
                 }
-                catch (InvalidQueryIdException)
+                catch (ApiRequestException ex) when (ex.Message == "query is too old and response timeout expired or query ID is invalid")
                 {
                     // ignore
                 }
