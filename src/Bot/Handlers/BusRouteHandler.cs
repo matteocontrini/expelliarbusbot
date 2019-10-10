@@ -188,7 +188,7 @@ namespace Bot.Handlers
                 {
                     string time = s.DepartureTime.Substring(0, s.DepartureTime.LastIndexOf(':'));
 
-                    caption.AppendLine($"▶ {time} ({s.StopName})");
+                    caption.AppendLine($"▶️ {time} ({s.StopName})");
 
                     index++;
                 }
@@ -233,7 +233,7 @@ namespace Bot.Handlers
             {
                 row.Add(
                     InlineKeyboardButton.WithCallbackData(
-                        text: "◀",
+                        text: "◀️",
                         callbackData: "load;" + trips[selectedTripIndex - 1].TripId
                     )
                 );
@@ -257,7 +257,7 @@ namespace Bot.Handlers
             {
                 row.Add(
                     InlineKeyboardButton.WithCallbackData(
-                        text: "▶",
+                        text: "▶️",
                         callbackData: "load;" + trips[selectedTripIndex + 1].TripId
                     )
                 );
