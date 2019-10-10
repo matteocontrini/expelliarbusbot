@@ -196,7 +196,8 @@ namespace Bot.Handlers
 
             try
             {
-                double delay = await this.delaysService.GetDelay(selectedTrip.TripId);
+                DelayResponse result = await this.delaysService.GetDelay(selectedTrip.TripId);
+                double delay = result.Delay;
 
                 caption.AppendLine();
 
@@ -216,6 +217,16 @@ namespace Bot.Handlers
                     caption.Append("✅ *ANTICIPO ");
                     caption.Append(delay);
                     caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
+                }
+
+                StopTime currentStop = stops.Find(x => x.StopId == result.CurrentStopId.ToString());
+
+                if (currentStop != null)
+                {
+                    caption.AppendLine();
+                    //caption.Append("🚦 ");
+                    caption.Append("Attualmente a ");
+                    caption.Append(currentStop.StopName);
                 }
             }
             catch (EndOfRouteException)

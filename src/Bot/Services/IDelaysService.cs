@@ -4,6 +4,6 @@ namespace Bot.Services
 {
     public interface IDelaysService
     {
-        Task<double> GetDelay(string tripId);
+        Task<DelayResponse> GetDelay(string tripId);
     }
 }

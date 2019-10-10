@@ -21,11 +21,11 @@ namespace Bot.Services
             this.logger = logger;
         }
 
-        public async Task<double> GetDelay(string tripId)
+        public async Task<DelayResponse> GetDelay(string tripId)
         {
             string cacheKey = $"delays/{tripId}";
 
-            if (this.cache.TryGetValue(cacheKey, out double cachedDelay))
+            if (this.cache.TryGetValue(cacheKey, out DelayResponse cachedDelay))
             {
                 this.logger.LogInformation($"Getting delay {cachedDelay} from cache {cacheKey}");
                 return cachedDelay;
@@ -67,12 +67,14 @@ namespace Bot.Services
                 throw new EndOfRouteException();
             }
 
+            DelayResponse result = new DelayResponse(delay, currentStopId);
+
             DateTimeOffset expiration = lastEvent.AddSeconds(30);
             this.logger.LogInformation($"Writing delay {delay} to {cacheKey} until {expiration}");
 
-            this.cache.Set(cacheKey, delay, expiration);
+            this.cache.Set(cacheKey, result, expiration);
 
-            return delay;
+            return result;
         }
     }
 }
