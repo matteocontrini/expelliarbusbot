@@ -73,6 +73,7 @@ namespace Bot.Handlers
             this.additionalStops = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "Mesiano \"Fac. Ingegneria\"",
+                "Venezia \"Port'Aquila\"",
                 "Piazza Dante \"Dogana\""
             };
 
