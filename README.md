@@ -18,11 +18,11 @@ Examples for [development](https://github.com/matteocontrini/expelliarbusbot/blo
 
 ## Running for development
 
-Make sure that you have the .NET Core 2.2 SDK and runtime installed on your system.
+Make sure that you have the .NET Core 3.0 SDK and runtime installed on your system.
 
 ### Visual Studio
 
-Make sure that the `src/Bot/bin/Debug/netcoreapp2.2` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
+Make sure that the `src/Bot/bin/Debug/netcoreapp3.0` directory contains the `appsettings.json` file and the `gtfs.db` file created above.
 
 Run with the nice green button.
 
@@ -64,7 +64,7 @@ Now run this command in the repository directory:
 docker-compose -f docker-compose.yml up --build
 ```
 
-**NOTE**: mapping a dedicated `db` directory is required for database persistence. SQLite  writes temporary files other than the `.db` one, and it does't always clean them before shut down.
+**NOTE**: mapping a dedicated `db` directory is required for database persistence. SQLite  writes temporary files other than the `.db` one, and it doesn't always clean them before shut down.
 
 ## Running in production
 
