@@ -4,12 +4,12 @@
     {
         public double Delay { get; set; }
 
-        public int CurrentStopId { get; set; }
+        public int PreviousStopId { get; set; }
 
-        public DelayResponse(double delay, int currentStopId)
+        public DelayResponse(double delay, int previousStopId)
         {
             this.Delay = delay;
-            this.CurrentStopId = currentStopId;
+            this.PreviousStopId = previousStopId;
         }
 
         public override string ToString()

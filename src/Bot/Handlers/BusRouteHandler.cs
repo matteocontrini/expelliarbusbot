@@ -219,7 +219,7 @@ namespace Bot.Handlers
                     caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
                 }
 
-                StopTime currentStop = stops.Find(x => x.StopId == result.CurrentStopId.ToString());
+                StopTime currentStop = stops.Find(x => x.StopId == result.PreviousStopId.ToString());
 
                 if (currentStop != null)
                 {

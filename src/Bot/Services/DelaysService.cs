@@ -43,7 +43,8 @@ namespace Bot.Services
             double delay;
             DateTimeOffset lastEvent;
             int endOfRouteStopId;
-            int currentStopId;
+            int previousStopId;
+            int nextStopId;
 
             try
             {
@@ -54,20 +55,22 @@ namespace Bot.Services
                 delay = json["delay"].ToObject<double>();
                 lastEvent = json["lastEventRecivedAt"].ToObject<DateTimeOffset>();
                 endOfRouteStopId = json["stopTimes"].Last["stopId"].ToObject<int>();
-                // use stopNext because sometimes the last stop is never reached
-                currentStopId = json["stopNext"].ToObject<int>();
+
+                previousStopId = json["stopLast"].ToObject<int>();
+                nextStopId = json["stopNext"].ToObject<int>();
             }
             catch
             {
                 throw new DataNotAvailableException();
             }
 
-            if (endOfRouteStopId == currentStopId)
+            if (endOfRouteStopId == nextStopId)
             {
+                // ^ use stopNext because sometimes the last stop is never reached
                 throw new EndOfRouteException();
             }
 
-            DelayResponse result = new DelayResponse(delay, currentStopId);
+            DelayResponse result = new DelayResponse(delay, previousStopId);
 
             DateTimeOffset expiration = lastEvent.AddSeconds(30);
             this.logger.LogInformation($"Writing delay {delay} to {cacheKey} until {expiration}");
