@@ -1,8 +1,8 @@
-﻿using SQLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using SQLite;
 
 namespace MapsGenerator
 {
@@ -13,7 +13,7 @@ namespace MapsGenerator
     {
         static void Main(string[] args)
         {
-            string databaseFilePath = @"C:\Users\mcont\Desktop\google_transit_urbano_tte\data.db";
+            string databaseFilePath = @"C:\Projects\expelliarbusbot\stuff\queries\gtfs.db";
 
             // mapbox public token
             string token = "";
@@ -30,13 +30,16 @@ namespace MapsGenerator
                 new Stop(46.065746, 11.146326), // 5 valoni
             };
 
+            // You can obtain the list of shapes with the query "all shapes linea 5.sql".
+            // Then use https://github.com/google/transitfeed/wiki/ScheduleViewer to see the paths
+
             List<(string, Stop[])> shapes = new List<(string, Stop[])>
             {
-                ( "D306_F0512_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
-                ( "D1173_T0526a_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[5] } ),
-                ( "D1190_T0542_Ritorno_sub1", new Stop[] { stops[4], stops[5] } ),
-                ( "D1165_T0522g_Ritorno_sub1", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
-                ( "D1169_T0522o_Ritorno_sub2", new Stop[] { stops[0], stops[2], stops[4], stops[5] } ),
+                ( "D130_F0512_Ritorno_sub1", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                ( "D499_T0526c_Ritorno_sub2", new Stop[] { stops[0], stops[2], stops[5] } ),
+                ( "D507_T0542_Ritorno_sub1", new Stop[] { stops[4], stops[5] } ),
+                ( "D500_T0528c_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                ( "D497_T0522j_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[4], stops[5] } ),
             };
 
             foreach ((string shapeId, Stop[] s) in shapes)
@@ -70,10 +73,11 @@ namespace MapsGenerator
                 using (var client = new WebClient())
                 {
                     // Uncomment to download and save map images
-                    //client.DownloadFile(url, $"{shapeId}.png");
+                    client.DownloadFile(url, $"{shapeId}.png");
                 }
             }
-            
+
+            Console.WriteLine("OKI DOKI");
             Console.ReadLine();
         }
 
