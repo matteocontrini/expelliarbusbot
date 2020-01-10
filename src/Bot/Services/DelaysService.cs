@@ -11,12 +11,17 @@ namespace Bot.Services
 {
     public class DelaysService : IDelaysService
     {
-        private const string BASE_URL = "https://app-tpl.tndigit.it/gtlservice/trips/";
+        private readonly string baseUrl;
+        private readonly string token;
         private readonly IMemoryCache cache;
         private readonly ILogger<DelaysService> logger;
 
-        public DelaysService(IMemoryCache cache, ILogger<DelaysService> logger)
+        public DelaysService(IMemoryCache cache,
+                             ILogger<DelaysService> logger,
+                             FugattiConfiguration configuration)
         {
+            this.baseUrl = configuration.BaseUrl;
+            this.token = configuration.Token;
             this.cache = cache;
             this.logger = logger;
         }
@@ -31,12 +36,12 @@ namespace Bot.Services
                 return cachedDelay;
             }
 
-            var request = new HttpRequest(BASE_URL + tripId)
+            var request = new HttpRequest($"{baseUrl}/trips/{tripId}")
             {
                 Timeout = TimeSpan.FromSeconds(1),
                 Headers = new Dictionary<string, string>
                 {
-                    { "User-Agent", "ExpelliarbusBot (+https://t.me/expelliarbusbot)" }
+                    { "Authorization", $"Basic {token}" }
                 }
             };
 

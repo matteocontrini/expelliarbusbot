@@ -71,6 +71,7 @@ namespace Bot
             
             services.ConfigureValidatableSetting<BotConfiguration>(hostContext.Configuration.GetSection("Bot"));
             services.ConfigureValidatableSetting<DatabaseConfiguration>(hostContext.Configuration.GetSection("Database"));
+            services.ConfigureValidatableSetting<FugattiConfiguration>(hostContext.Configuration.GetSection("Fugatti"));
 
             services.AddMemoryCache();
 
