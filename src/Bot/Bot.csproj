@@ -24,25 +24,21 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D156_F0512_Ritorno_sub2.png">
+    <None Update="maps\D171_F0512_Ritorno_sub2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D575_T0522k_Ritorno_sub1.png">
+    <None Update="maps\D597_T0522j_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D576_T0526c_Ritorno_sub2.png">
+    <None Update="maps\D599_T0526c_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D577_T0528c_Ritorno_sub2.png">
+    <None Update="maps\D600_T0528c_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D584_T0542_Ritorno_sub2.png">
+    <None Update="maps\D606_T0542a_Ritorno_sub2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="maps\" />
   </ItemGroup>
 
   <ItemGroup>

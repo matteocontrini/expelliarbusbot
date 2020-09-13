@@ -13,7 +13,7 @@ namespace MapsGenerator
     {
         static void Main(string[] args)
         {
-            string databaseFilePath = @"C:\Projects\expelliarbusbot\stuff\queries\gtfs.db";
+            string databaseFilePath = @"C:\Projects\expelliarbusbot\stuff\queries\gtfs_2020_09_10.db";
 
             // mapbox public token
             string token = "";
@@ -35,11 +35,11 @@ namespace MapsGenerator
 
             List<(string, Stop[])> shapes = new List<(string, Stop[])>
             {
-                ( "D156_F0512_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
-                ( "D576_T0526c_Ritorno_sub2", new Stop[] { stops[0], stops[2], stops[5] } ),
-                ( "D584_T0542_Ritorno_sub2", new Stop[] { stops[4], stops[5] } ),
-                ( "D577_T0528c_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
-                ( "D575_T0522k_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[4], stops[5] } ),
+                ( "D171_F0512_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                ( "D599_T0526c_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[5] } ),
+                ( "D606_T0542a_Ritorno_sub2", new Stop[] { stops[4], stops[5] } ),
+                ( "D600_T0528c_Ritorno_sub1", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                ( "D597_T0522j_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[4], stops[5] } ),
             };
 
             foreach ((string shapeId, Stop[] s) in shapes)
