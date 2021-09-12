@@ -13,7 +13,7 @@ namespace MapsGenerator
     {
         static void Main(string[] args)
         {
-            string databaseFilePath = @"C:\Projects\expelliarbusbot\stuff\queries\gtfs_2020_09_10.db";
+            string databaseFilePath = @"C:\Projects\expelliarbusbot\stuff\queries\gtfs_2021_09_10.db";
 
             // mapbox public token
             string token = "";
@@ -35,11 +35,18 @@ namespace MapsGenerator
 
             List<(string, Stop[])> shapes = new List<(string, Stop[])>
             {
-                ( "D171_F0512_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
-                ( "D599_T0526c_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[5] } ),
-                ( "D606_T0542a_Ritorno_sub2", new Stop[] { stops[4], stops[5] } ),
-                ( "D600_T0528c_Ritorno_sub1", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
-                ( "D597_T0522j_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[4], stops[5] } ),
+                // passa da centro civico
+                ( "D174_F0512_Ritorno_sub2", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                // da polo sociale
+                ( "D607_T0526c_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[5] } ),
+                // da oltrecastello
+                ( "D609_T0530_Ritorno_sub2", new Stop[] { stops[0], stops[2], stops[5] } ),
+                // da polo scientifico
+                ( "D617_T0542_Ritorno_sub2", new Stop[] { stops[4], stops[5] } ),
+                // passa da centro civico
+                ( "D608_T0528c_Ritorno_sub1", new Stop[] { stops[0], stops[1], stops[3], stops[5] } ),
+                // da polo sociale, passa da polo scientifico
+                ( "D605_T0522j_Ritorno_sub1", new Stop[] { stops[0], stops[2], stops[4], stops[5] } ),
             };
 
             foreach ((string shapeId, Stop[] s) in shapes)
