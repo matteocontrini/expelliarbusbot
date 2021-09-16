@@ -207,7 +207,7 @@ namespace Bot.Handlers
                 }
                 else if (delay > 0)
                 {
-                    caption.Append("⚠ *RITARDO ");
+                    caption.Append("⚠️ *RITARDO ");
                     caption.Append(delay);
                     caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
                 }
