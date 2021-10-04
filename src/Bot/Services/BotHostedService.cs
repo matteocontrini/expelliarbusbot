@@ -67,7 +67,7 @@ namespace Bot.Services
                 {
                     // ignore
                 }
-                catch (ApiRequestException ex) when (ex.Message == "Bad Request: cancelled by new editMessageMedia request")
+                catch (ApiRequestException ex) when (ex.Message == "Bad Request: canceled by new editMessageMedia request")
                 {
                     // ignore
                 }
