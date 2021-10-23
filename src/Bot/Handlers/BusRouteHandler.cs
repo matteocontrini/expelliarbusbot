@@ -210,6 +210,10 @@ namespace Bot.Handlers
                     caption.Append("⚠️ *RITARDO ");
                     caption.Append(delay);
                     caption.Append(delay == 1 ? " MINUTO*" : " MINUTI*");
+                    if (delay >= 10)
+                    {
+                        caption.Append(" 😱");
+                    }
                 }
                 else
                 {
