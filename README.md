@@ -18,7 +18,7 @@ Examples for [development](https://github.com/matteocontrini/expelliarbusbot/blo
 
 ## Running for development
 
-Make sure that you have the .NET Core 3.0 SDK and runtime installed on your system.
+Make sure that you have the .NET 6.0 SDK and runtime installed on your system.
 
 ### Visual Studio
 
