@@ -53,7 +53,7 @@ namespace Bot.Services
 
             try
             {
-                HttpResponse response = await request.SendAsync();
+                IHttpResponse response = await request.SendAsync();
 
                 JObject json = JObject.Parse(response.Body);
 

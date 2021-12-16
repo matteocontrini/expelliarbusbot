@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PlainConsoleLogger;
+using PlainConsoleLoggerFormatter;
 
 namespace Bot
 {
@@ -55,7 +55,8 @@ namespace Bot
         private static void ConfigureLogging(HostBuilderContext hostContext, ILoggingBuilder logging)
         {
             logging.AddConfiguration(hostContext.Configuration.GetSection("Logging"));
-            logging.AddPlainConsole();
+            logging.AddConsoleFormatter<PlainConsoleFormatter, PlainConsoleFormatterOptions>();
+            logging.AddConsole(options => options.FormatterName = nameof(PlainConsoleFormatter));
         }
 
         private static void ConfigureApp(HostBuilderContext hostContext, IConfigurationBuilder configApp)
