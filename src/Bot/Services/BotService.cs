@@ -14,7 +14,7 @@ namespace Bot.Services
 
         public TelegramBotClient Client { get; }
 
-        public User Me { get; set;  }
+        public User Me { get; set; }
 
         public BotService(BotConfiguration config)
         {
@@ -26,12 +26,14 @@ namespace Bot.Services
 
             this.Client = new TelegramBotClient(config.BotToken, client);
 
-            this.menuMarkup = new ReplyKeyboardMarkup(new KeyboardButton[]
-                            {
-                                new KeyboardButton("5️⃣ Povo-Trento"),
-                                new KeyboardButton("❓ Aiuto")
-                            },
-                            resizeKeyboard: true);
+            this.menuMarkup = new ReplyKeyboardMarkup(new[]
+            {
+                new KeyboardButton[] { "5️⃣ Povo-Trento" },
+                new KeyboardButton[] { "❓ Aiuto" }
+            })
+            {
+                ResizeKeyboard = true
+            };
         }
 
         public IReplyMarkup GetDefaultKeyboard(ChatType chatType)

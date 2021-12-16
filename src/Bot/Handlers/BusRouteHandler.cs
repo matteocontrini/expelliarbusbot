@@ -11,6 +11,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using NodaTime.Text;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -49,10 +50,10 @@ namespace Bot.Handlers
         private readonly ILogger<BusRouteHandler> logger;
 
         public BusRouteHandler(IBotService botService,
-                               ITripRepository tripRepository,
-                               IMemoryCache cache,
-                               IDelaysService delaysService,
-                               ILogger<BusRouteHandler> logger)
+            ITripRepository tripRepository,
+            IMemoryCache cache,
+            IDelaysService delaysService,
+            ILogger<BusRouteHandler> logger)
         {
             this.bot = botService;
             this.tripRepository = tripRepository;
@@ -342,7 +343,7 @@ namespace Bot.Handlers
                         replyMarkup: kb
                     );
                 }
-                catch (MessageIsNotModifiedException)
+                catch (ApiRequestException exception) when (exception.Message.Contains("message is not modified"))
                 {
                     await this.bot.Client.AnswerCallbackQueryAsync(
                         callbackQueryId: this.CallbackQuery.Id,

@@ -17,7 +17,8 @@
     <PackageReference Include="NetEscapades.Configuration.Validation" Version="1.0.1" />
     <PackageReference Include="PlainConsoleLoggerFormatter" Version="5.0.0" />
     <PackageReference Include="PlainHttp" Version="1.2.0" />
-    <PackageReference Include="Telegram.Bot" Version="15.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="17.0.0" />
+    <PackageReference Include="Telegram.Bot.Extensions.Polling" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

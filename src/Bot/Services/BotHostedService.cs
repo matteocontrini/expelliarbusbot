@@ -4,7 +4,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
+using Telegram.Bot.Extensions.Polling;
+using Telegram.Bot.Types;
 
 namespace Bot.Services
 {
@@ -18,8 +21,8 @@ namespace Bot.Services
         private readonly IServiceProvider serviceProvider;
 
         public BotHostedService(ILogger<BotHostedService> logger,
-                                IServiceProvider serviceProvider,
-                                IBotService botService)
+            IServiceProvider serviceProvider,
+            IBotService botService)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -29,24 +32,21 @@ namespace Bot.Services
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             // Get information about the bot associated with the token
-            this.bot.Me = await this.bot.Client.GetMeAsync();
+            this.bot.Me = await this.bot.Client.GetMeAsync(cancellationToken);
 
             this.logger.LogInformation($"Running as @{this.bot.Me.Username}");
-
-            // Register event handlers
-            this.bot.Client.OnUpdate += OnUpdate;
-            this.bot.Client.OnReceiveError += OnReceiveError;
-            this.bot.Client.OnReceiveGeneralError += OnReceiveGeneralError;
 
             // Create a new token to be passed to .StartReceiving() below.
             // When the token is canceled, the tg client stops receiving
             this.tokenSource = new CancellationTokenSource();
 
             // Start getting messages
-            this.bot.Client.StartReceiving(cancellationToken: this.tokenSource.Token);
+            this.bot.Client.StartReceiving(HandleUpdateAsync, HandleErrorAsync, new ReceiverOptions(),
+                cancellationToken: this.tokenSource.Token);
         }
 
-        private async void OnUpdate(object sender, Telegram.Bot.Args.UpdateEventArgs e)
+        private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
+            CancellationToken cancellationToken)
         {
             // Create a scope for the update that is about to be processed
             using (var scope = this.serviceProvider.CreateScope())
@@ -57,17 +57,15 @@ namespace Bot.Services
                 try
                 {
                     // Process the update
-                    await updateService.ProcessUpdate(e.Update);
+                    await updateService.ProcessUpdate(update);
                 }
-                catch (ApiRequestException ex) when (ex.Message == "query is too old and response timeout expired or query ID is invalid")
+                catch (ApiRequestException exception) when (exception.Message.Contains("query ID is invalid")
+                                                            || exception.Message.Contains("message is not modified"))
                 {
                     // ignore
                 }
-                catch (MessageIsNotModifiedException)
-                {
-                    // ignore
-                }
-                catch (ApiRequestException ex) when (ex.Message == "Bad Request: canceled by new editMessageMedia request")
+                catch (ApiRequestException ex) when (ex.Message ==
+                                                     "Bad Request: canceled by new editMessageMedia request")
                 {
                     // ignore
                 }
@@ -75,20 +73,17 @@ namespace Bot.Services
                 {
                     this.logger.LogError(ex, "Exception [{Message}] while handling update {Update}",
                         ex.Message.Replace('\n', '|'), // keep the message on one line
-                        e.Update.ToJson()
+                        update.ToJson()
                     );
                 }
             }
         }
 
-        private void OnReceiveGeneralError(object sender, Telegram.Bot.Args.ReceiveGeneralErrorEventArgs e)
+        private Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception,
+            CancellationToken cancellationToken)
         {
-            this.logger.LogError(e.Exception, "OnReceiveGeneralError");
-        }
-
-        private void OnReceiveError(object sender, Telegram.Bot.Args.ReceiveErrorEventArgs e)
-        {
-            this.logger.LogError(e.ApiRequestException, "OnReceiveError");
+            this.logger.LogError(exception, "Polling error");
+            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
