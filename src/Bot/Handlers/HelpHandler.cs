@@ -23,9 +23,9 @@ namespace Bot.Handlers
             builder.AppendLine();
             builder.AppendLine("🕑 Il bot indica anche i *ritardi in tempo reale*, se disponibili. Non sono mostrate informazioni se la corsa non è ancora partita");
             builder.AppendLine();
-            builder.AppendLine("🤯 Il bot è stato sviluppato da @matteocontrini. Un ringraziamento speciale a [Dario Crisafulli](https://botfactory.it/#chisiamo) per il logo 👏");
+            builder.AppendLine("🤯 Il bot è stato sviluppato da Matteo Contrini (@matteosonoio). Un ringraziamento speciale a Dario per il logo 👏");
             builder.AppendLine();
-            builder.Append("🤓 Il bot è [open source](https://github.com/matteocontrini/expelliarbusbot), of course");
+            builder.Append("🤓 Il bot è [open source](https://github.com/matteocontrini/expelliarbusbot)");
 
             await this.bot.Client.SendTextMessageAsync(
                 chatId: this.Chat.Id,
