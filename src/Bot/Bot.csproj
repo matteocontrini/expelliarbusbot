@@ -25,22 +25,22 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D174_F0512_Ritorno_sub2.png">
+    <None Update="maps\D170_F0512_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D605_T0522j_Ritorno_sub1.png">
+    <None Update="maps\D602_T0522k_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D607_T0526c_Ritorno_sub1.png">
+    <None Update="maps\D603_T0526c_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D609_T0530_Ritorno_sub2.png">
+    <None Update="maps\D605_T0530_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D608_T0528c_Ritorno_sub1.png">
+    <None Update="maps\D604_T0528c_Ritorno_sub1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="maps\D617_T0542_Ritorno_sub2.png">
+    <None Update="maps\D612_T0542a_Ritorno_sub2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
